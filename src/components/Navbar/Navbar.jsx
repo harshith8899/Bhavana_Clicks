@@ -11,7 +11,6 @@ export default function Navbar() {
 
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -19,55 +18,49 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const goTo = (path) => {
-    navigate(path);
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMenuOpen(false);
   };
 
   return (
     <nav className={`navbar ${scrolled ? "navbar--scrolled" : ""}`}>
       <div className="navbar__inner">
-
-        {/* LEFT LINKS */}
-        <div className="navbar__side navbar__side--left">
+        <div className="navbar__links navbar__links--left">
           <div className="navbar__group">
             <span className="navbar__link">Portfolio</span>
             <div className="navbar__dropdown">
-              <Link to="/gallery?type=weddings" onClick={() => setMenuOpen(false)}>Weddings</Link>
-              <Link to="/gallery?type=couples" onClick={() => setMenuOpen(false)}>Couples</Link>
+              <span onClick={() => scrollTo("weddings")}>Weddings</span>
+              <span onClick={() => scrollTo("couples")}>Couples</span>
             </div>
           </div>
           <div className="navbar__group">
             <span className="navbar__link">Info</span>
             <div className="navbar__dropdown">
-              <Link to="/services" onClick={() => setMenuOpen(false)}>Pricing</Link>
-              <Link to="/services#guides" onClick={() => setMenuOpen(false)}>Wedding Guides</Link>
+              <span onClick={() => scrollTo("pricing")}>Pricing</span>
+              <span onClick={() => scrollTo("guides")}>Wedding guides</span>
             </div>
           </div>
         </div>
 
-        {/* CENTER LOGO */}
-        <Link to="/" className="navbar__logo">
+        <div className="navbar__logo" onClick={() => scrollTo("hero")}>
           Bhavana <em>Clicks</em>
-        </Link>
-
-        {/* RIGHT LINKS */}
-        <div className="navbar__side navbar__side--right">
-          <Link to="/about" className="navbar__link">About Me</Link>
-          <Link to="/contact" className="navbar__link">Contact</Link>
         </div>
 
-        {/* MOBILE BURGER */}
+        <div className="navbar__links navbar__links--right">
+          <Link to="/about" className="navbar__link">About me</Link>
+          <span className="navbar__link" onClick={() => scrollTo("contact")}>Contact</span>
+        </div>
+
         <button
-          className={`navbar__burger ${menuOpen ? "open" : ""}`}
+          className="navbar__burger"
+          aria-label="Open menu"
           onClick={() => setMenuOpen((v) => !v)}
-          aria-label="Toggle menu"
         >
           <span /><span /><span />
         </button>
       </div>
 
-      {/* MOBILE MENU */}
       {menuOpen && (
         <div className="navbar__mobile">
           <span onClick={() => scrollTo("weddings")}>Weddings</span>
