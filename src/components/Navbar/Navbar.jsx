@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 export default function Navbar() {
-  const location = useLocation();
-
-  if (location.pathname === "/about") {
-    return null;
-  }
-
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -70,12 +64,12 @@ export default function Navbar() {
       {/* MOBILE MENU */}
       {menuOpen && (
         <div className="navbar__mobile">
-          <span onClick={() => scrollTo("weddings")}>Weddings</span>
-          <span onClick={() => scrollTo("couples")}>Couples</span>
-          <span onClick={() => scrollTo("pricing")}>Pricing</span>
-          <span onClick={() => scrollTo("guides")}>Wedding guides</span>
-          <Link to="/about" onClick={() => setMenuOpen(false)} className="navbar__link">About me</Link>
-          <span onClick={() => scrollTo("contact")}>Contact</span>
+          <span onClick={() => goTo("/gallery?type=weddings")}>Weddings</span>
+          <span onClick={() => goTo("/gallery?type=couples")}>Couples</span>
+          <span onClick={() => goTo("/services")}>Pricing</span>
+          <span onClick={() => goTo("/services#guides")}>Wedding Guides</span>
+          <span onClick={() => goTo("/about")}>About Me</span>
+          <span onClick={() => goTo("/contact")}>Contact</span>
         </div>
       )}
     </nav>
