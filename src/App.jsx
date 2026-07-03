@@ -3,9 +3,9 @@ import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 
-function App() {
+export default function App() {
   return (
-    <>
+    <BrowserRouter>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -14,5 +14,3 @@ function App() {
     </>
   );
 }
-
-export default App;

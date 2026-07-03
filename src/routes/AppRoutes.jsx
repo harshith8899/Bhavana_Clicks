@@ -3,15 +3,15 @@ import Navbar from "../components/Navbar/Navbar";
 import Home from "../pages/Home/Home";
 import About from "../pages/About/About";
 
-function App() {
+export default function AppRoutes() {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/"         element={<Home />} />
+      <Route path="/about"    element={<About />} />
+      <Route path="/contact"  element={<Contact />} />
+      <Route path="/gallery"  element={<Gallery />} />
+      <Route path="/services" element={<Services />} />
+    </Routes>
   );
 }
 
