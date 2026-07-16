@@ -1,17 +1,17 @@
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
-import Home from "./pages/Home/Home";
-import About from "./pages/About/About";
+import Footer from "./components/Footer/Footer";
+import AppRoutes from "./routes/AppRoutes";
+import "./styles/global.css";
+import "./styles/animations.css";
 
 function App() {
   return (
     <>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
-    </>
+      <AppRoutes />
+      <Footer />
+    </BrowserRouter>
   );
 }
 
