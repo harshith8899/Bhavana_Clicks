@@ -8,16 +8,22 @@ body{
     background:#e5e5e5;
     display:flex;
     justify-content:center;
-    padding:40px 0;
+    align-items:flex-start;
+    padding:20px 10px;
+    min-height:100vh;
     font-family:Segoe UI, sans-serif;
 }
 
 /* PAPER */
 .paper{
-    width:1356px;
+    width:min(1356px,calc(100vw - 40px));
+    max-width:1356px;
     background:white;
     overflow:hidden;
     box-shadow:0 0 25px rgba(0,0,0,0.15);
+    border:1px solid rgba(0,0,0,0.08);
+    border-radius:18px;
+    margin:0 auto 30px;
 }
 
 /* ====================================== */
@@ -137,7 +143,7 @@ nav a:hover{
 .top-image{
     width:100%;
     height:450px;
-    background-image:url("topimage.jpg");
+    /* background-image removed — set via inline style in JSX from Cloudinary */
     background-color:#c8b8a8;
     background-size:cover;
     background-position:center;
@@ -181,12 +187,12 @@ nav a:hover{
 }
 
 .about-title{
-    font-size:120px;
+    font-size:80px;
     font-weight:900;
     line-height:0.85;
-    color:black;
+    color:rgb(0, 0, 0);
     position:relative;
-    z-index:2;
+    z-index:0;
     word-break:break-word;
 }
 
@@ -194,7 +200,7 @@ nav a:hover{
     position:relative;
     left:0;
     top:0;
-    z-index:1;
+    z-index:2;
 }
 
 .about-image{
@@ -202,7 +208,7 @@ nav a:hover{
     height:auto;
     object-fit:cover;
     box-shadow:0 10px 30px rgba(0,0,0,0.15);
-    transform:translateY(200px);
+    transform:translateY(220px);
     opacity:0;
     transition:all 1s ease 0.60s;
 }
@@ -232,7 +238,7 @@ nav a:hover{
 
 .bottom-section{
     width:100%;
-    height:1200px;
+    min-height:1200px;
     position:relative;
     overflow:hidden;
     background:#1a1a1a;
@@ -242,8 +248,7 @@ nav a:hover{
 .bottom-bg{
     position:absolute;
     inset:0;
-    background-image:url("bottomimage.jpg");
-    
+    /* background-image removed — set via inline style in JSX from Cloudinary */
     background-size:cover;
     background-position:center;
     will-change:transform;
@@ -255,7 +260,6 @@ nav a:hover{
     content:'';
     position:absolute;
     inset:0;
-    
 }
 
 /* ====================================== */
@@ -274,26 +278,35 @@ nav a:hover{
 }
 
 .parallax-text{
-    font-size:160px;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    font-size:clamp(180px, 12vw, 280px);
     font-weight:900;
-    letter-spacing:-6px;
+    letter-spacing:-5px;
     text-transform:uppercase;
     color:rgb(27, 67, 28);
-    white-space:nowrap;
+    white-space:normal;
     will-change:transform;
-    /* Start above the bottom section — behind the about section */
     position:absolute;
     top:0;
     left:50%;
+    width:auto;
+    max-width:calc(100vw - 120px);
+    padding:0 80px;
     transform:translate(-50%, -100%);
     opacity:1;
-    line-height:1;
+    line-height:0.95;
     user-select:none;
+    text-align:center;
+    box-sizing:border-box;
 }
 
 .parallax-text span{
     display:block;
     text-align:center;
+    line-height:0.95;
+    word-break:break-word;
 }
 
 /* ====================================== */
@@ -315,7 +328,6 @@ nav a:hover{
     height:100%;
     object-fit:cover;
     opacity:1;
-    /* swap object-position to frame the image how you like */
     object-position:center;
 }
 
@@ -327,6 +339,10 @@ nav a:hover{
     position:absolute;
     inset:0;
     z-index:3;
+    padding:0 80px;
+    box-sizing:border-box;
+    max-width:1280px;
+    margin:0 auto;
 }
 
 .photo-item{
@@ -434,22 +450,16 @@ nav a:hover{
     position:absolute;
     left:0;
     bottom:0;
-
     width:100%;
     height:80px;
-
     background:linear-gradient(
         to bottom,
         rgba(0,0,0,0),
         rgba(0,0,0,1)
     );
-
     pointer-events:none;
     z-index:20;
 }
-
-
-
 
 /* ====================================== */
 /* SPLIT IMAGE MOVEMENT */
@@ -467,17 +477,81 @@ nav a:hover{
     .paper{ width:95%; }
     .logo{ font-size:10vw; }
     .intro-logo{ font-size:120px; }
-    .parallax-text{ font-size:100px; }
+    .parallax-text{ font-size:clamp(170px, 12vw, 240px); padding:0 60px; }
     .about-section{ padding:50px 60px; }
     .about-title{ font-size:90px; }
 }
 
+@media(max-width:1200px){
+    .top-image{ height:420px; }
+    .parallax-text{ font-size:clamp(150px, 14vw, 210px); padding:0 50px; }
+    .about-title{ font-size:85px; }
+    .photo-grid{ gap:12px; }
+}
+
 @media(max-width:1024px){
-    .about-section{ padding:40px 40px; }
+    .paper{ width:calc(100vw - 30px); margin:18px auto 28px; }
+    .about-section{ padding:40px 32px; }
     .about-container{ grid-template-columns:1fr; gap:30px; }
     .about-title{ font-size:80px; }
     .about-image-wrapper{ margin-top:20px; }
     header{ height:240px; }
+    .photo-grid{
+        position:relative;
+        inset:auto;
+        display:grid;
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+        gap:18px;
+        padding:0 24px 24px;
+        height:auto;
+        margin-top:40px;
+        width:100%;
+    }
+    .photo-item{
+        position:relative;
+        left:auto;
+        top:auto;
+        width:100% !important;
+        height:auto !important;
+        transform:translateY(0);
+        opacity:1;
+    }
+    .photo-item img{
+        height:auto;
+        min-height:220px;
+        border-radius:24px;
+    }
+    .bottom-section{
+        height:auto;
+        min-height:900px;
+        padding-bottom:70px;
+    }
+}
+
+@media(max-width:768px){
+    .photo-grid{
+        grid-template-columns:1fr;
+        gap:16px;
+        padding:0 18px 24px;
+    }
+    .photo-item img{
+        min-height:200px;
+        object-position:center;
+    }
+    .about-section{ padding:32px 22px; }
+    .about-title{ font-size:70px; }
+    .parallax-text{ font-size:clamp(100px, 16vw, 180px); padding:0 28px; }
+}
+
+@media(max-width:640px){
+    .paper{ width:calc(100vw - 20px); margin:16px auto 24px; }
+    .about-section{ padding:28px 16px; }
+    .about-title{ font-size:60px; }
+    .parallax-text{ font-size:clamp(70px, 18vw, 130px); padding:0 18px; }
+    .photo-grid{ padding:0 14px 24px; gap:14px; }
+    .photo-item img{
+        min-height:180px;
+    }
 }
 
 @media(max-width:768px){
@@ -489,14 +563,36 @@ nav a:hover{
     .about-paragraphs p{ font-size:16px; line-height:1.6; }
     .about-image{ width:150px; }
     .about-image-wrapper{ margin-top:15px; }
-    .parallax-text{ font-size:50px; }
-    .photo-grid{ gap:8px; padding:30px 15px; }
-    .bottom-section{ height:700px; }
+    .parallax-text{ font-size:clamp(90px, 14vw, 120px); }
+    .photo-grid{
+        grid-template-columns:1fr;
+        padding:0 15px;
+        gap:14px;
+    }
+    .photo-item img{
+        min-height:200px;
+    }
+    .bottom-section{
+        height:auto;
+        min-height:750px;
+    }
     .intro-logo{ font-size:80px; }
 }
 
+@media(max-width:640px){
+    .about-section{ padding:28px 22px; }
+    .about-title{ font-size:55px; }
+    .about-image{ width:140px; }
+    .parallax-text{ font-size:45px; }
+    .photo-grid{ gap:7px; padding:25px 13px; }
+    .photo-item img{
+        min-height:180px;
+    }
+    .bottom-section{ height:auto; min-height:650px; }
+}
+
 @media(max-width:480px){
-    .paper{ width:100%; }
+    .paper{ width:calc(100vw - 20px); margin:16px auto 24px; }
     header{ height:auto; gap:20px; padding:20px 15px; }
     nav{ gap:10px; flex-wrap:wrap; justify-content:center; }
     nav a{ font-size:11px; }
@@ -507,20 +603,15 @@ nav a:hover{
     .about-title{ font-size:45px; }
     .about-paragraphs p{ font-size:14px; line-height:1.5; }
     .about-image{ width:120px; }
-    .parallax-text{ font-size:35px; }
-    .photo-grid{ gap:6px; padding:20px 10px; }
-    .photo-col:nth-child(1) .photo-item{ height:200px; }
-    .photo-col:nth-child(2) .photo-item:nth-child(1){ height:150px; }
-    .photo-col:nth-child(2) .photo-item:nth-child(2){ height:250px; }
-    .photo-col:nth-child(3) .photo-item{ height:180px; }
-    .photo-col:nth-child(4) .photo-item{ height:220px; }
-    .photo-col:nth-child(5) .photo-item{ height:160px; }
-    .bottom-section{ height:500px; }
+    .parallax-text{ font-size:clamp(55px, 14vw, 90px); padding:0 15px; white-space:normal; }
+    .photo-grid{ padding:20px 10px; gap:10px; }
+    .photo-item img{
+        min-height:160px;
+    }
+    .bottom-section{ height:auto; min-height:500px; }
 }
 
-/* Exprience section*/
-
-
+/* Experience section */
 
 .experience-section{
     width:100%;

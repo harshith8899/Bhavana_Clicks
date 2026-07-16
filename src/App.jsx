@@ -5,14 +5,14 @@ import AppRoutes from "./routes/AppRoutes";
 import "./styles/global.css";
 import "./styles/animations.css";
 
-function App() {
+export default function App() {
   return (
-    <>
-      <Navbar />
-      <AppRoutes />
-      <Footer />
+    <BrowserRouter>
+      <div style={{ margin: 0, padding: 0, width: "100%", overflowX: "hidden" }}>
+        <Navbar />
+        <AppRoutes />
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 }
-
-export default App;
