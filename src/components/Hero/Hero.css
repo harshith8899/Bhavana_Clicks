@@ -1,0 +1,98 @@
+/* ── HERO ── */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #b8c4a0 0%, #c8d4b4 50%, #d4cfc0 100%);
+  /* Once you add /public/images/hero.jpg, replace above with: */
+  /* background-image: url('/images/hero.jpg');
+     background-size: cover;
+     background-position: center; */
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.18);
+  z-index: 1;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.hero__line {
+  font-family: "Jost", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 2.8;
+  display: block;
+}
+
+.hero__scroll {
+  position: absolute;
+  bottom: 32px;
+  right: 36px;
+  z-index: 2;
+  font-family: "Jost", sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  background: none;
+  border: none;
+  cursor: pointer;
+  writing-mode: vertical-rl;
+  transition: color 0.2s;
+}
+.hero__scroll:hover { color: #ffffff; }
+
+/* ── 3-PHOTO COLLAGE ── */
+.collage {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: 55vh;
+  min-height: 380px;
+}
+
+.collage__item {
+  overflow: hidden;
+  background: #c7d2b4;
+  /* placeholder color until real photos added */
+}
+
+.collage__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.collage__item:hover img {
+  transform: scale(1.04);
+}
+
+@media (max-width: 768px) {
+  .hero__line { font-size: 10px; letter-spacing: 0.25em; }
+  .collage { grid-template-columns: 1fr; height: auto; }
+  .collage__item { height: 280px; }
+}
