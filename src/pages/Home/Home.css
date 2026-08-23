@@ -30,11 +30,11 @@
 
 .home__reimagine-desc {
   font-family: var(--font-serif);
-  font-size: 19px;
-  font-weight: 300;
+  font-size: 28px;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--ink-soft);
-  max-width: 560px;
+  max-width: 1200px;
 }
 
 /* HEY YOU SECTION */
@@ -42,9 +42,9 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  max-width: 1280px;
+  max-width: 1580px;
   margin: 0 auto;
-  padding: 0 48px 120px;
+  padding: 0 48px 20px;
   gap: 80px;
 }
 
@@ -69,7 +69,7 @@
 
 .home__hey-desc {
   font-family: var(--font-serif);
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 300;
   line-height: 1.8;
   color: var(--ink-soft);
@@ -103,7 +103,7 @@
 
 .home__camera-desc {
   font-family: var(--font-serif);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 300;
   line-height: 1.85;
   color: var(--ink-soft);

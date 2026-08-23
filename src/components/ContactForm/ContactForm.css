@@ -58,6 +58,16 @@
   padding: 16px 48px;
   font-size: 11px;
 }
+.contact-form__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.contact-form__error {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: #a83c2e;
+}
 
 .contact-form__whatsapp {
   font-family: var(--font-sans);

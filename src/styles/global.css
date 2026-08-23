@@ -60,7 +60,7 @@ button {
 /* ── SHARED BUTTONS ── */
 .btn {
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 15px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   cursor: pointer;
@@ -131,7 +131,7 @@ button {
 /* ── SHARED SECTION STYLES ── */
 .section-kicker {
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 20px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--sage);

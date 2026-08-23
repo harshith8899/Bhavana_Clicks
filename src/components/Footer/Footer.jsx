@@ -1,20 +1,21 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import "./Footer.css";
 
-export default function Footer() {
+const Footer = forwardRef(function Footer(_props, ref) {
   return (
-    <footer className="footer">
+    <footer className="footer" ref={ref}>
 
       <div className="footer__logo">
         Bhavana <em>Clicks</em>
       </div>
 
       <p className="footer__inclusive">
-        LGBTQ-friendly | BIPOC Inclusive | All skin colors & body sizes are welcomed
+       BIPOC Inclusive | All skin colors & body sizes are welcomed
       </p>
 
       <p className="footer__studio">
-        Bhavana Clicks | Intimate Wedding + Elopement + Engagement Photographer
+        Bhavana Clicks |  Elopement + Engagement Photographer
         <br />Karnataka & Worldwide
       </p>
 
@@ -46,6 +47,12 @@ export default function Footer() {
         </a>
       </div>
 
+      <Link to="/admin/login" className="footer__admin-link">
+        Admin Login
+      </Link>
+
     </footer>
   );
-}
+});
+
+export default Footer;

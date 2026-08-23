@@ -1,0 +1,70 @@
+rules_version = '2';
+
+// Firestore security rules for Bhavana Clicks.
+//
+// Firebase Authentication (Email/Password) is now enabled, with exactly two
+// admin accounts created directly in the Firebase Console. The app has no
+// self-registration UI, but that alone does NOT make `request.auth != null`
+// a safe stand-in for "is an admin" — Firebase's Identity Toolkit sign-up
+// endpoint is reachable by anyone who knows the project's public apiKey
+// (which is, by design, public), regardless of whether the app exposes a
+// signup form. So instead of trusting "signed in", isAuthorizedAdmin() below
+// checks the signed-in user's verified email against an explicit allowlist.
+//
+// This is deliberately the smallest mechanism that closes that gap: no
+// Cloud Functions/custom claims (which would require the paid Blaze plan),
+// no separate `admins` collection to seed. The tradeoff is that adding or
+// changing an admin means editing this list and redeploying rules.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthorizedAdmin() {
+      return request.auth != null &&
+        request.auth.token.email in [
+          'bhavanaclicks@gmail.com',
+          'harshithsham8899@gmail.com'
+        ];
+    }
+
+    function isValidStatus(status) {
+      return status in ['new', 'contacted', 'confirmed', 'archived'];
+    }
+
+    // Read by the public About page (src/services/getImages.js).
+    // Not writable by visitors; no admin content-management flow exists yet.
+    match /about_images/{imageId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Written by src/services/galleryService.js, which is not currently
+    // called from any page in the app, and not read anywhere either.
+    // Deny everything until it's actually wired up.
+    match /gallery/{docId} {
+      allow read, write: if false;
+    }
+
+    // Public enquiry submission (src/services/enquiryService.js).
+    // Visitors may create an enquiry but never read, modify, or delete any
+    // enquiry — including their own. Authorized admins may read enquiries,
+    // and may update ONLY the `status` field to one of the four valid
+    // values (src/services/enquiryService.js: updateEnquiryStatus) — every
+    // other field must stay untouched, enforced by the affectedKeys()
+    // check below rather than trusted from the client. Deletion is not
+    // implemented anywhere yet, so it stays denied for everyone.
+    match /enquiries/{enquiryId} {
+      allow create: if true;
+      allow read: if isAuthorizedAdmin();
+      allow update: if isAuthorizedAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && isValidStatus(request.resource.data.status);
+      allow delete: if false;
+    }
+
+    // Deny anything not explicitly matched above.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

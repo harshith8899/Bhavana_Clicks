@@ -1,19 +1,58 @@
 import { useState } from "react";
 import "./ContactForm.css";
+import { saveEnquiry } from "../../services/enquiryService";
+import { sendEnquiryNotification } from "../../services/emailService";
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ContactForm() {
   const [form, setForm] = useState({
     name: "", email: "", phone: "", date: "", event: "", package: "", message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const validate = () => {
+    if (!form.name.trim()) return "Please enter your name.";
+    if (!form.email.trim() || !EMAIL_PATTERN.test(form.email.trim())) {
+      return "Please enter a valid email address.";
+    }
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.email) return;
-    setSubmitted(true);
+    if (submitting) return;
+
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    setError(null);
+    setSubmitting(true);
+    try {
+      await saveEnquiry(form);
+      // The enquiry is safely stored at this point. Email delivery is a
+      // best-effort notification on top of that — its failure must never
+      // undo the success state or make the visitor think their enquiry
+      // was lost.
+      setSubmitted(true);
+      try {
+        await sendEnquiryNotification(form);
+      } catch (emailError) {
+        console.error("Enquiry saved, but notification email failed to send:", emailError);
+      }
+    } catch {
+      setError("We couldn't submit your enquiry right now. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -85,8 +124,14 @@ export default function ContactForm() {
           onChange={handleChange}
         />
       </div>
-      <button type="submit" className="btn btn--solid contact-form__submit">
-        Send Enquiry ✦
+      {error && <p className="contact-form__error">{error}</p>}
+
+      <button
+        type="submit"
+        className="btn btn--solid contact-form__submit"
+        disabled={submitting}
+      >
+        {submitting ? "Submitting..." : "Send Enquiry ✦"}
       </button>
       <p className="contact-form__whatsapp">
         Or WhatsApp directly:{" "}

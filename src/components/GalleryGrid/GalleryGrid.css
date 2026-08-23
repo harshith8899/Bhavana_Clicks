@@ -1,12 +1,15 @@
 .gallery-grid {
-  padding: 100px 48px;
-  max-width: 1280px;
+  padding: 100px 0;
   margin: 0 auto;
 }
 
 .gallery-grid__header {
   text-align: center;
   margin-bottom: 56px;
+  max-width: 1280px;
+  padding: 0 48px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .gallery-grid__title {
@@ -18,14 +21,53 @@
   line-height: 1;
 }
 
-.gallery-grid__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+/* ---- pin mechanics (position toggled via JS state class) ---- */
+
+.gallery-grid__pin-wrapper {
+  position: relative;
+  /* height set dynamically in JS: 1 viewport + horizontal distance to travel */
 }
+
+.gallery-grid__pin {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  left: 0;
+}
+
+.gallery-grid__pin--active {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.gallery-grid__pin--locked {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+}
+
+.gallery-grid__pin--static {
+  position: static;
+  height: auto;
+  overflow: visible;
+}
+
+.gallery-grid__track {
+  display: flex;
+  gap: 28px;
+  padding: 0 48px;
+  width: max-content;
+  will-change: transform;
+}
+
+/* ---- card styling ---- */
 
 .gallery-grid__card {
   display: block;
+  flex: 0 0 clamp(260px, 26vw, 380px);
   text-decoration: none;
   color: var(--ink);
 }
@@ -78,10 +120,22 @@
   border-color: var(--ink);
 }
 
+/* ---- mobile fallback: plain horizontal swipe ---- */
 @media (max-width: 900px) {
-  .gallery-grid { padding: 70px 24px; }
-  .gallery-grid__grid { grid-template-columns: 1fr 1fr; gap: 20px; }
-}
-@media (max-width: 580px) {
-  .gallery-grid__grid { grid-template-columns: 1fr; }
+  .gallery-grid { padding: 70px 0; }
+
+  .gallery-grid__pin--static {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+
+  .gallery-grid__track {
+    padding: 0 24px 8px;
+  }
+
+  .gallery-grid__track .gallery-grid__card {
+    flex: 0 0 80vw;
+    scroll-snap-align: start;
+  }
 }

@@ -73,7 +73,30 @@
   display: flex;
   align-items: center;
 }
-.footer__social a:hover { color: #c7d2b4; }
+.footer__social a:hover { color: #c7d2b4;
+}
+
+.footer__admin-link {
+  font-family: "Jost", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 244, 237, 0.3);
+  text-decoration: none;
+  margin-top: 4px;
+  transition: color 0.2s ease;
+}
+.footer__admin-link:hover {
+  color: rgba(247, 244, 237, 0.6);
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 0;
+}
 
 @media (max-width: 768px) {
   .footer { padding: 56px 24px 40px; }
