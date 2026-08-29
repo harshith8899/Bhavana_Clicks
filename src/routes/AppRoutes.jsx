@@ -12,6 +12,8 @@ import AdminLogin from "../pages/Admin/AdminLogin/AdminLogin";
 import AdminLayout from "../pages/Admin/AdminLayout/AdminLayout";
 import AdminDashboard from "../pages/Admin/AdminDashboard/AdminDashboard";
 import AdminEnquiries from "../pages/Admin/AdminEnquiries/AdminEnquiries";
+import AdminContent from "../pages/Admin/AdminContent/AdminContent";
+import AdminGallery from "../pages/Admin/AdminGallery/AdminGallery";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 
 export default function AppRoutes() {
@@ -38,6 +40,8 @@ export default function AppRoutes() {
       >
         <Route index element={<AdminDashboard />} />
         <Route path="enquiries" element={<AdminEnquiries />} />
+        <Route path="content" element={<AdminContent />} />
+        <Route path="gallery" element={<AdminGallery />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

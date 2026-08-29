@@ -78,6 +78,24 @@ a.admin-nav__link:hover {
   color: rgba(247, 244, 237, 0.5);
 }
 
+.admin-nav__view-site {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(247, 244, 237, 0.6);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(247, 244, 237, 0.3);
+  padding-bottom: 3px;
+  white-space: nowrap;
+  margin-right: 24px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.admin-nav__view-site:hover {
+  color: var(--white);
+  border-color: var(--white);
+}
+
 .admin-nav__logout {
   font-family: var(--font-sans);
   font-size: 12px;
@@ -123,6 +141,9 @@ a.admin-nav__link:hover {
     width: 100%;
     flex-wrap: wrap;
     gap: 18px;
+  }
+  .admin-nav__view-site {
+    margin-right: 0;
   }
   .admin-content { padding: 40px 20px; }
 }

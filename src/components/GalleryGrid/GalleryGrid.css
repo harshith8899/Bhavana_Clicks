@@ -21,46 +21,54 @@
   line-height: 1;
 }
 
-/* ---- pin mechanics (position toggled via JS state class) ---- */
+/* ---- horizontal scroll row ----
+   Plain native horizontal scrolling (touch/trackpad swipe, click-drag,
+   shift+wheel all work for free) plus a manual "next" button. No pinning,
+   no wheel interception, no scroll-position takeover. */
 
-.gallery-grid__pin-wrapper {
+.gallery-grid__scroll-row {
   position: relative;
-  /* height set dynamically in JS: 1 viewport + horizontal distance to travel */
-}
-
-.gallery-grid__pin {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  left: 0;
-}
-
-.gallery-grid__pin--active {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-}
-
-.gallery-grid__pin--locked {
-  position: sticky;
-  top: 0;
-  z-index: 6;
-}
-
-.gallery-grid__pin--static {
-  position: static;
-  height: auto;
-  overflow: visible;
 }
 
 .gallery-grid__track {
   display: flex;
   gap: 28px;
   padding: 0 48px;
-  width: max-content;
-  will-change: transform;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+.gallery-grid__track::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Edge */
+}
+
+.gallery-grid__next {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.gallery-grid__next:hover {
+  background: var(--ink);
+  color: var(--white);
+  border-color: var(--ink);
 }
 
 /* ---- card styling ---- */
@@ -120,22 +128,26 @@
   border-color: var(--ink);
 }
 
-/* ---- mobile fallback: plain horizontal swipe ---- */
+/* ---- mobile fallback: plain horizontal swipe ----
+   No sticky pin, no wheel interception — the track's own native
+   overflow-x handles touch/swipe scrolling directly. */
 @media (max-width: 900px) {
   .gallery-grid { padding: 70px 0; }
 
-  .gallery-grid__pin--static {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-  }
-
   .gallery-grid__track {
     padding: 0 24px 8px;
+    scroll-snap-type: x mandatory;
   }
 
   .gallery-grid__track .gallery-grid__card {
     flex: 0 0 80vw;
     scroll-snap-align: start;
+  }
+
+  .gallery-grid__next {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    right: 8px;
   }
 }

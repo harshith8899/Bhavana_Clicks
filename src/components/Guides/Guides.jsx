@@ -1,9 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  getWebsiteImagesBySection,
+  buildResponsiveImageUrl,
+  buildSrcSet,
+} from "../../services/mediaService";
 import "./Guides.css";
 
 export default function Guides() {
   const ref = useRef(null);
+  const [images, setImages] = useState({});
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -14,9 +20,30 @@ export default function Guides() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    getWebsiteImagesBySection("home").then((map) => {
+      if (!cancelled) setImages(map);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const bgEntry = images.guidesBanner;
+  const bgUrl = bgEntry?.imageUrl ? buildResponsiveImageUrl(bgEntry.imageUrl, { width: 1600 }) : null;
+
   return (
     <section className="guides" id="guides">
-      <img src="/images/guides-bg.jpg" alt="Wedding planning guides" className="guides__bg" />
+      {bgUrl && (
+        <img
+          src={bgUrl}
+          srcSet={buildSrcSet(bgEntry.imageUrl, [640, 1024, 1600, 1920])}
+          sizes="100vw"
+          alt={bgEntry.altText || "Wedding planning guides"}
+          className="guides__bg"
+        />
+      )}
       <div className="guides__overlay" />
       <div className="guides__content fade-up" ref={ref}>
         <span className="guides__kicker">Wedding Guides</span>

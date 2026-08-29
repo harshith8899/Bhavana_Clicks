@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Hero from "../../components/Hero/Hero";
 import GalleryGrid from "../../components/GalleryGrid/GalleryGrid";
@@ -6,10 +6,16 @@ import Weddings from "../../components/Weddings/Weddings";
 import Guides from "../../components/Guides/Guides";
 import Pricing from "../../components/Pricing/Pricing";
 import Couples from "../../components/Couples/Couples";
+import {
+  getWebsiteImagesBySection,
+  buildResponsiveImageUrl,
+  buildSrcSet,
+} from "../../services/mediaService";
 import "./Home.css";
 
 export default function Home() {
   const refs = useRef([]);
+  const [images, setImages] = useState({});
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -20,6 +26,23 @@ export default function Home() {
     refs.current.forEach((r) => r && observer.observe(r));
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    getWebsiteImagesBySection("home").then((map) => {
+      if (!cancelled) setImages(map);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const heyImageUrl = images.heyImage?.imageUrl
+    ? buildResponsiveImageUrl(images.heyImage.imageUrl, { width: 700 })
+    : null;
+  const cameraImageUrl = images.cameraImage?.imageUrl
+    ? buildResponsiveImageUrl(images.cameraImage.imageUrl, { width: 700 })
+    : null;
 
   return (
     <main className="home">
@@ -48,8 +71,14 @@ export default function Home() {
       {/* 3. HEY YOU — photographer intro split */}
       <section className="home__hey" id="intro">
         <div className="home__hey-image slide-left" ref={(el) => (refs.current[1] = el)}>
-          {/* Replace with your real photo */}
-          <img src="/images/photographer.jpg" alt="Bhavana — wedding photographer" />
+          {heyImageUrl && (
+            <img
+              src={heyImageUrl}
+              srcSet={buildSrcSet(images.heyImage.imageUrl, [400, 700, 1000])}
+              sizes="(max-width: 900px) 90vw, 500px"
+              alt={images.heyImage.altText || "Bhavana — wedding photographer"}
+            />
+          )}
         </div>
         <div className="home__hey-text slide-right" ref={(el) => (refs.current[2] = el)}>
           <span className="section-kicker">Hey you beautiful human!</span>
@@ -88,7 +117,14 @@ export default function Home() {
           </Link>
         </div>
         <div className="home__camera-image slide-right" ref={(el) => (refs.current[4] = el)}>
-          <img src="/images/about-home.jpg" alt="Bhavana — photographer" />
+          {cameraImageUrl && (
+            <img
+              src={cameraImageUrl}
+              srcSet={buildSrcSet(images.cameraImage.imageUrl, [400, 700, 1000])}
+              sizes="(max-width: 900px) 90vw, 500px"
+              alt={images.cameraImage.altText || "Bhavana — photographer"}
+            />
+          )}
         </div>
       </section>
 

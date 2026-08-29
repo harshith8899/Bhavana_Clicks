@@ -6,6 +6,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: linear-gradient(135deg, #b8c4a0, #d4cfc0);
 }
 .contact-page__hero img {
   position: absolute;

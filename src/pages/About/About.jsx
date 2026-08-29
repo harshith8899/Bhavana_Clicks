@@ -1,7 +1,42 @@
 import "./About.css";
 import useAboutAnimations from "./useAboutAnimations";
 import { useEffect, useState } from "react";
-import { getImages } from "../../services/getImages";
+import {
+  getWebsiteImagesBySection,
+  buildResponsiveImageUrl,
+  buildSrcSet,
+} from "../../services/mediaService";
+
+// Small helper so JSX below can just do url(topImage) / srcSet(aboutImage, ...)
+// instead of repeating the optional-chaining + fallback dance at every call site.
+function urlFor(imageMap, position, transform) {
+  const entry = imageMap[position];
+  if (!entry?.imageUrl) return null;
+  return buildResponsiveImageUrl(entry.imageUrl, transform);
+}
+
+function srcSetFor(imageMap, position, widths) {
+  const entry = imageMap[position];
+  if (!entry?.imageUrl) return undefined;
+  return buildSrcSet(entry.imageUrl, widths);
+}
+
+function altFor(imageMap, position, fallback) {
+  return imageMap[position]?.altText || fallback;
+}
+
+// Original ids/animation-direction classes preserved exactly as they were
+// (photo-from-top / photo-from-bottom + #ptop1 etc.) so the existing
+// scroll-animation CSS/JS in useAboutAnimations keeps working unchanged.
+const GALLERY_TILES = [
+  { position: "gallery1", id: "ptop1", direction: "top" },
+  { position: "gallery2", id: "pbot1", direction: "bottom" },
+  { position: "gallery3", id: "ptop2", direction: "top" },
+  { position: "gallery4", id: "pbot2", direction: "bottom" },
+  { position: "gallery5", id: "pbot3", direction: "bottom" },
+  { position: "gallery6", id: "ptop3", direction: "top" },
+  { position: "gallery7", id: "pbot4", direction: "bottom" },
+];
 
 function About() {
 
@@ -10,18 +45,17 @@ function About() {
   const [imageMap, setImageMap] = useState({});
 
   useEffect(() => {
+    let cancelled = false;
+
     async function loadImages() {
-      const data = await getImages();
-      const map = {};
-
-      data.forEach((img) => {
-        map[img.position] = img.imageUrl;
-      });
-
-      setImageMap(map);
+      const map = await getWebsiteImagesBySection("about");
+      if (!cancelled) setImageMap(map);
     }
 
     loadImages();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -59,8 +93,8 @@ function About() {
           <div
             className="top-image"
             style={
-              imageMap.topImage
-                ? { backgroundImage: `url(${imageMap.topImage})` }
+              urlFor(imageMap, "topImage", { width: 1920, crop: "fill", gravity: "auto" })
+                ? { backgroundImage: `url(${urlFor(imageMap, "topImage", { width: 1920, crop: "fill", gravity: "auto" })})` }
                 : {}
             }
           ></div>
@@ -77,11 +111,17 @@ function About() {
 
                 <div className="about-image-wrapper">
                   {/* ── Portrait / about image ── */}
-                  <img
-                    src={imageMap.aboutImage || ""}
-                    alt="About"
-                    className="about-image"
-                  />
+                  {urlFor(imageMap, "aboutImage", { width: 340 }) ? (
+                    <img
+                      src={urlFor(imageMap, "aboutImage", { width: 340 })}
+                      srcSet={srcSetFor(imageMap, "aboutImage", [170, 340, 500])}
+                      sizes="(max-width: 768px) 140px, 170px"
+                      alt={altFor(imageMap, "aboutImage", "About")}
+                      className="about-image"
+                    />
+                  ) : (
+                    <div className="about-image about-image--empty" aria-hidden="true" />
+                  )}
                 </div>
 
               </div>
@@ -108,8 +148,8 @@ function About() {
               className="bottom-bg"
               id="bottomBg"
               style={
-                imageMap.bottomBg
-                  ? { backgroundImage: `url(${imageMap.bottomBg})` }
+                urlFor(imageMap, "bottomBg", { width: 1920, crop: "fill", gravity: "auto" })
+                  ? { backgroundImage: `url(${urlFor(imageMap, "bottomBg", { width: 1920, crop: "fill", gravity: "auto" })})` }
                   : {}
               }
             ></div>
@@ -123,67 +163,42 @@ function About() {
               </div>
             </div>
 
-            {/* ── Full-width overlay image ── */}
+            {/* ── Full-width overlay image ──
+                This layer sits (via z-index) directly above the photo
+                grid below, so when there's no overlay image it must
+                render nothing at all rather than an opaque placeholder —
+                an opaque fallback here would hide the whole grid behind it. */}
             <div className="overlay-image-wrapper">
-              <img
-                src={imageMap.overlay || ""}
-                alt=""
-                className="overlay-image"
-              />
+              {urlFor(imageMap, "overlay", { width: 1600 }) && (
+                <img
+                  src={urlFor(imageMap, "overlay", { width: 1600 })}
+                  srcSet={srcSetFor(imageMap, "overlay", [640, 1024, 1600, 1920])}
+                  sizes="100vw"
+                  alt={altFor(imageMap, "overlay", "")}
+                  className="overlay-image"
+                />
+              )}
             </div>
 
             {/* ── Photo grid — all 7 images from Cloudinary ── */}
             <div className="photo-grid">
-
-              <div
-                className="photo-item photo-from-top"
-                id="ptop1"
-              >
-                <img src={imageMap.gallery1 || ""} alt="" />
-              </div>
-
-              <div
-                className="photo-item photo-from-bottom"
-                id="pbot1"
-              >
-                <img src={imageMap.gallery2 || ""} alt="" />
-              </div>
-
-              <div
-                className="photo-item photo-from-top"
-                id="ptop2"
-              >
-                <img src={imageMap.gallery3 || ""} alt="" />
-              </div>
-
-              <div
-                className="photo-item photo-from-bottom"
-                id="pbot2"
-              >
-                <img src={imageMap.gallery4 || ""} alt="" />
-              </div>
-
-              <div
-                className="photo-item photo-from-bottom"
-                id="pbot3"
-              >
-                <img src={imageMap.gallery5 || ""} alt="" />
-              </div>
-
-              <div
-                className="photo-item photo-from-top"
-                id="ptop3"
-              >
-                <img src={imageMap.gallery6 || ""} alt="" />
-              </div>
-
-              <div
-                className="photo-item photo-from-bottom"
-                id="pbot4"
-              >
-                <img src={imageMap.gallery7 || ""} alt="" />
-              </div>
-
+              {GALLERY_TILES.map(({ position, id, direction }) => {
+                const src = urlFor(imageMap, position, { width: 640 });
+                return (
+                  <div key={position} className={`photo-item photo-from-${direction}`} id={id}>
+                    {src ? (
+                      <img
+                        src={src}
+                        srcSet={srcSetFor(imageMap, position, [320, 480, 640, 960])}
+                        sizes="(max-width: 1024px) 100vw, 33vw"
+                        alt={altFor(imageMap, position, "")}
+                      />
+                    ) : (
+                      <div className="photo-item__empty" aria-hidden="true" />
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
           </div>

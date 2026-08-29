@@ -50,8 +50,12 @@
 
 .home__hey-image {
   aspect-ratio: 4 / 5;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
   overflow: hidden;
   border-radius: 2px;
+  background: var(--sage-light);
 }
 .home__hey-image img {
   width: 100%;
@@ -112,8 +116,12 @@
 
 .home__camera-image {
   aspect-ratio: 4 / 5;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
   overflow: hidden;
   border-radius: 2px;
+  background: var(--sage-light);
 }
 .home__camera-image img {
   width: 100%;

@@ -1,11 +1,39 @@
+import { useEffect, useState } from "react";
 import ContactForm from "../../components/ContactForm/ContactForm";
+import {
+  getWebsiteImagesBySection,
+  buildResponsiveImageUrl,
+  buildSrcSet,
+} from "../../services/mediaService";
 import "./Contact.css";
 
 export default function Contact() {
+  const [images, setImages] = useState({});
+
+  useEffect(() => {
+    let cancelled = false;
+    getWebsiteImagesBySection("contact").then((map) => {
+      if (!cancelled) setImages(map);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const heroEntry = images.hero;
+  const heroUrl = heroEntry?.imageUrl ? buildResponsiveImageUrl(heroEntry.imageUrl, { width: 1920 }) : null;
+
   return (
     <main className="contact-page">
       <div className="contact-page__hero">
-        <img src="/images/contact-bg.jpg" alt="Contact Bhavana Clicks" />
+        {heroUrl && (
+          <img
+            src={heroUrl}
+            srcSet={buildSrcSet(heroEntry.imageUrl, [640, 1024, 1600, 1920])}
+            sizes="100vw"
+            alt={heroEntry.altText || "Contact Bhavana Clicks"}
+          />
+        )}
         <div className="contact-page__hero-overlay" />
         <div className="contact-page__hero-text">
           <span>Let's Connect</span>

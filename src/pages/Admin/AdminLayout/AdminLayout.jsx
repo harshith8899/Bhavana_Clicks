@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import { logout } from "../../../services/authService";
 import "./AdminLayout.css";
-
-const COMING_SOON_ITEMS = ["Website Content", "Gallery"];
 
 export default function AdminLayout() {
   const [loggingOut, setLoggingOut] = useState(false);
@@ -48,15 +46,31 @@ export default function AdminLayout() {
               Enquiries
             </NavLink>
           </li>
-          {COMING_SOON_ITEMS.map((item) => (
-            <li key={item}>
-              <span className="admin-nav__link admin-nav__link--disabled">
-                {item}
-                <span className="admin-nav__soon">Soon</span>
-              </span>
-            </li>
-          ))}
+          <li>
+            <NavLink
+              to="/admin/content"
+              className={({ isActive }) =>
+                `admin-nav__link${isActive ? " admin-nav__link--active" : ""}`
+              }
+            >
+              Website Content
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/admin/gallery"
+              className={({ isActive }) =>
+                `admin-nav__link${isActive ? " admin-nav__link--active" : ""}`
+              }
+            >
+              Gallery
+            </NavLink>
+          </li>
         </ul>
+
+        <Link to="/" className="admin-nav__view-site">
+          View Website
+        </Link>
 
         <button
           className="admin-nav__logout"

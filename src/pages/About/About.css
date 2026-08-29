@@ -218,6 +218,17 @@ nav a:hover{
     opacity:1;
 }
 
+.about-image--empty{
+    aspect-ratio:3/4;
+    background-color:#c8b8a8;
+}
+
+.photo-item__empty{
+    width:100%;
+    height:100%;
+    background-color:#c8b8a8;
+}
+
 .about-paragraphs{
     display:flex;
     flex-direction:column;

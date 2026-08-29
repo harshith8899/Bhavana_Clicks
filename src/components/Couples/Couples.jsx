@@ -1,28 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  getWebsiteImagesBySection,
+  buildResponsiveImageUrl,
+  buildSrcSet,
+} from "../../services/mediaService";
+import { getPostsBySection } from "../../services/postsService";
 import "./Couples.css";
-
-const POSTS = [
-  { id: 1, image: "/images/couples/c1.jpg", category: "Couples", title: "Wildflower Session | Lara & Scottie" },
-  { id: 2, image: "/images/couples/c2.jpg", category: "Couples", title: "Nandi Hills Engagement | Ash & Alex" },
-  { id: 3, image: "/images/couples/c3.jpg", category: "Couples", title: "Adventurous Couples Shoot | Al & Ben" },
-  { id: 4, image: "/images/couples/c4.jpg", category: "Couples", title: "Coorg Session | Mollie & Drew" },
-  { id: 5, image: "/images/couples/c5.jpg", category: "Couples", title: "Sunrise Engagement | Emily & Dylan" },
-  { id: 6, image: "/images/couples/c6.jpg", category: "Couples", title: "Kerala Session | Karen & Ben" },
-];
-
-const FILTERS = ["All", "Couples"];
 
 export default function Couples() {
   const [active, setActive] = useState("All");
-  const filtered = active === "All" ? POSTS : POSTS.filter(p => p.category === active);
+  const [images, setImages] = useState({});
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    getWebsiteImagesBySection("couples").then((map) => {
+      if (!cancelled) setImages(map);
+    });
+    getPostsBySection("couples")
+      .then((data) => {
+        if (!cancelled) setPosts(data);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const categories = ["All", ...new Set(posts.map((p) => p.category).filter(Boolean))];
+  const filtered = active === "All" ? posts : posts.filter((p) => p.category === active);
+
+  const heroEntry = images.hero;
+  const heroUrl = heroEntry?.imageUrl ? buildResponsiveImageUrl(heroEntry.imageUrl, { width: 1920 }) : null;
 
   return (
     <main className="cp">
 
       {/* HERO */}
       <div className="cp__hero">
-        <img src="/images/couples-hero.jpg" alt="Couples" />
+        {heroUrl && (
+          <img
+            src={heroUrl}
+            srcSet={buildSrcSet(heroEntry.imageUrl, [640, 1024, 1600, 1920])}
+            sizes="100vw"
+            alt={heroEntry.altText || "Couples"}
+          />
+        )}
         <div className="cp__hero-overlay" />
         <div className="cp__hero-text">
           <p className="cp__hero-kicker">Portfolio</p>
@@ -31,31 +58,44 @@ export default function Couples() {
       </div>
 
       {/* FILTERS */}
-      <div className="cp__filters">
-        {FILTERS.map(f => (
-          <button
-            key={f}
-            className={`cp__filter ${active === f ? "active" : ""}`}
-            onClick={() => setActive(f)}
-          >
-            {f}
-          </button>
-        ))}
-      </div>
+      {categories.length > 1 && (
+        <div className="cp__filters">
+          {categories.map(f => (
+            <button
+              key={f}
+              className={`cp__filter ${active === f ? "active" : ""}`}
+              onClick={() => setActive(f)}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* GRID */}
-      <div className="cp__grid">
-        {filtered.map(post => (
-          <Link key={post.id} to={`/couples/${post.id}`} className="cp__card">
-            <div className="cp__card-img">
-              <img src={post.image} alt={post.title} />
-            </div>
-            <p className="cp__card-cat">{post.category}</p>
-            <h2 className="cp__card-title">{post.title}</h2>
-            <span className="cp__card-link">Continue</span>
-          </Link>
-        ))}
-      </div>
+      {!loading && posts.length === 0 && (
+        <p className="cp__empty">More couples sessions coming soon.</p>
+      )}
+
+      {filtered.length > 0 && (
+        <div className="cp__grid">
+          {filtered.map(post => (
+            <Link key={post.id} to={`/couples/${post.id}`} className="cp__card">
+              <div className="cp__card-img">
+                <img
+                  src={buildResponsiveImageUrl(post.imageUrl, { width: 500 })}
+                  srcSet={buildSrcSet(post.imageUrl, [320, 500, 720])}
+                  sizes="(max-width: 580px) 100vw, (max-width: 900px) 50vw, 33vw"
+                  alt={post.title}
+                />
+              </div>
+              <p className="cp__card-cat">{post.category}</p>
+              <h2 className="cp__card-title">{post.location ? `${post.location} | ${post.title}` : post.title}</h2>
+              <span className="cp__card-link">Continue</span>
+            </Link>
+          ))}
+        </div>
+      )}
 
     </main>
   );

@@ -4,6 +4,7 @@
   height: 70vh;
   min-height: 480px;
   overflow: hidden;
+  background: linear-gradient(135deg, #b8c4a0, #d4cfc0);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,6 +76,15 @@
   max-width: 1280px;
   margin: 48px auto 0;
   padding: 0 48px 100px;
+}
+
+.cp__empty {
+  text-align: center;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 18px;
+  font-style: italic;
+  color: #5c6650;
+  padding: 80px 24px;
 }
 .cp__card {
   display: block;

@@ -1,5 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  getWebsiteImagesBySection,
+  buildResponsiveImageUrl,
+  buildSrcSet,
+} from "../../services/mediaService";
 import "./Pricing.css";
 
 const FAQS = [
@@ -31,13 +36,34 @@ const PACKAGES = [
 
 export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState(null);
+  const [images, setImages] = useState({});
+
+  useEffect(() => {
+    let cancelled = false;
+    getWebsiteImagesBySection("pricing").then((map) => {
+      if (!cancelled) setImages(map);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const heroEntry = images.hero;
+  const heroUrl = heroEntry?.imageUrl ? buildResponsiveImageUrl(heroEntry.imageUrl, { width: 1920 }) : null;
 
   return (
     <main className="pp">
 
       {/* HERO */}
       <div className="pp__hero">
-        <img src="/images/pricing-hero.jpg" alt="Pricing" />
+        {heroUrl && (
+          <img
+            src={heroUrl}
+            srcSet={buildSrcSet(heroEntry.imageUrl, [640, 1024, 1600, 1920])}
+            sizes="100vw"
+            alt={heroEntry.altText || "Pricing"}
+          />
+        )}
         <div className="pp__hero-overlay" />
         <div className="pp__hero-text">
           <h1 className="pp__hero-title">pricing &</h1>

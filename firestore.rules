@@ -31,11 +31,28 @@ service cloud.firestore {
       return status in ['new', 'contacted', 'confirmed', 'archived'];
     }
 
-    // Read by the public About page (src/services/getImages.js).
-    // Not writable by visitors; no admin content-management flow exists yet.
+    // Legacy collection — superseded by website_images (Phase 2). Left
+    // exactly as-is (still publicly readable, still admin-unwritable) so
+    // its existing data isn't destroyed; nothing in the app writes to it
+    // going forward.
     match /about_images/{imageId} {
       allow read: if true;
       allow write: if false;
+    }
+
+    // Phase 2 media system (src/services/mediaService.js). Public visitors
+    // may read image references (needed by every public page that shows a
+    // managed image); only authorized admins may create/update them.
+    // "Removing" an image (mediaService.removeWebsiteImage) is implemented
+    // as an UPDATE — it sets imageUrl/publicId to null and isActive to
+    // false rather than deleting the document — so it's already covered by
+    // the update rule below. Actual Firestore document deletion, and
+    // Cloudinary asset deletion, are both still intentionally unimplemented
+    // and stay denied for everyone.
+    match /website_images/{slotId} {
+      allow read: if true;
+      allow create, update: if isAuthorizedAdmin();
+      allow delete: if false;
     }
 
     // Written by src/services/galleryService.js, which is not currently
@@ -43,6 +60,18 @@ service cloud.firestore {
     // Deny everything until it's actually wired up.
     match /gallery/{docId} {
       allow read, write: if false;
+    }
+
+    // Dynamic post management (src/services/postsService.js) — Home
+    // Featured, Weddings, Couples, Elopement Guides list entries. Unlike
+    // website_images, these are genuine list items with no slot identity
+    // to preserve, so real deletion (not a soft isActive flag) is the
+    // correct model: admins may create/update/delete the Firestore
+    // document. The Cloudinary asset itself is still never deleted by any
+    // code path, matching the rest of the media system.
+    match /posts/{postId} {
+      allow read: if true;
+      allow create, update, delete: if isAuthorizedAdmin();
     }
 
     // Public enquiry submission (src/services/enquiryService.js).
